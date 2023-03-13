@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+
+    <form>
+        <h2>Penalty Game</h2>
+        <label for="outcome">Choose an outcome:</label>
+        <select id="outcome" name="outcome">
+          <option value="">--Please choose an option--</option>
+          <optgroup label="Sector">
+            <option value="sector-1">1</option>
+            <option value="sector-2">2</option>
+            ...
+            <option value="sector-24">24</option>
+          </optgroup>
+          <optgroup label="Color">
+            <option value="color-yellow">Yellow</option>
+            <option value="color-blue">Blue</option>
+          </optgroup>
+          <optgroup label="Row">
+            <option value="row-1-8">1-8</option>
+            <option value="row-9-16">9-16</option>
+            <option value="row-17-24">17-24</option>
+          </optgroup> 
+              <option value= "bar">Hitting the bar</label><br><br> 
+                 <option value= "failure">Failure (goalkeeper stops ball or it goes wide)</label><br><br> 
+        </select><br><br>
+      
+         Bet Amount: $<input type= "number" id= "betAmount" name= "betAmount"><br><br> 
+         Place Bet: $<input type= "submit"><br> 
+       
+    </form>
+
+    <div id="result"></div>
+
+ <script>
+  
+  const colorPayout = 2;
+  const rowPayout = 3;
+  const sectorPayout = 3;
+  const failurePayout = 24;
+  const barPayout = 24;
+  
+  const form = document.querySelector('form');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  
+  const outcome = form.elements['outcome'].value;
+  const betAmount = form.elements['betAmount'].value;
+
+  // Generate winning results
+  function generateWinningResults() {
+  const winningSector = Math.floor(Math.random() * 24) + 1;
+  const colors = ['yellow', 'blue'];
+  const winningColor = colors[Math.floor(Math.random() * colors.length)];
+  const rows = ['1-8', '9-16', '17-24'];
+  const winningRow = rows[Math.floor(Math.random() * rows.length)];
+  const ballHitBar = Math.random() < 0.5;
+  const ballMissedGoal = Math.random() < 0.5;
+
+  return {
+    winningSector,
+    winningColor,
+    winningRow,
+    ballHitBar,
+    ballMissedGoal
+  };
+}
+  
+const winningResults = generateWinningResults();
+
+  // Check if player has won
+  let winnings = 0;
+  
+   if (outcome.startsWith('sector')) {
+     const sector = parseInt(outcome.split('-')[1]);
+     if (sector == winningResults.winningSector) {
+       winnings += betAmount * sectorPayout;
+     }
+   } else if (outcome.startsWith('color')) {
+     const color = outcome.split('-')[1];
+     if (color == winningResults.winningColor) {
+       winnings += betAmount * colorPayout;
+     }
+   } else if (outcome.startsWith('row')) {
+     const row = outcome.split('-')[1];
+     if (row == winningResults.winningRow) {
+       winnings += betAmount * rowPayout;
+     }
+   } else if (outcome == 'bar') {
+     if (winningResults.ballHitBar) {
+       winnings += betAmount * barPayout;
+     }
+   } else if (outcome == 'failure') {
+     if (winningResults.ballMissedGoal) {
+       winnings += betAmount * failurePayout;
+     }
+   }
+   let resultText = `Winning Sector: ${winningResults.winningSector}\n`;
+   resultText += `Winning Color: ${winningResults.winningColor}\n`;
+   resultText += `Winning Row: ${winningResults.winningRow}\n`;
+   
+   	if(winningResults.ballHitBar){
+   		resultText+=`Ball hit the bar\n`
+   	}
+   	else{
+   		resultText+=`Ball did not hit the bar\n`
+   	}
+   	
+   	if(winningResults.ballMissedGoal){
+   		resultText+=`Ball missed goal\n`
+   	}
+   	else{
+   		resultText+=`Ball did not miss goal\n`
+   	}
+
+
+       result.innerHTML=resultText;
+ 
+    
+});
+
+
+   
+
+ </script>
+</body>
+</html>
